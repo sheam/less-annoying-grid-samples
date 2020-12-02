@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FormEvent } from 'react';
-import { useGridContext } from '../../grid';
+import { useGridContext } from 'less-annoying-grid';
 import './styles.css';
 
 interface IToolbarProps { }

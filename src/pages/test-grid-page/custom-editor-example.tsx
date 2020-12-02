@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useRowContext } from '../../grid';
+import { useRowContext } from 'less-annoying-grid';
 import { ChangeEvent } from 'react';
 
 interface ICustomEditorExampleProps

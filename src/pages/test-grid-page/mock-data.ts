@@ -4,7 +4,7 @@ import
     IFieldFilter,
     IPagination,
     ISortColumn,
-} from '../../grid';
+} from 'less-annoying-grid';
 
 export interface IData
 {

@@ -14,7 +14,7 @@ import
     SyncAction,
     useGridContext,
     validate
-} from '../../grid';
+} from 'less-annoying-grid';
 import
 {
     addData,
