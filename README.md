@@ -11,7 +11,7 @@ It also serves as a repo for sample css files, as the grid project ships with no
 1. in the grid repo: `yarn link`.
 1. in the samples repo: `yarn install`.
 1. in the samples repo: `yarn link less-annoying-grid'
-1. in the grid repo: `link ../less-annoying-grid-samples/node_modules/react`
+1. in the grid repo: `yarn link ../less-annoying-grid-samples/node_modules/react`
 
 ## Running
 1. from the grid repo: `yarn watch`

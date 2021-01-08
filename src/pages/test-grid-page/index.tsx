@@ -36,7 +36,7 @@ const TestGrid: React.FunctionComponent = (): JSX.Element =>
                 sortAscLabel="(ASC)"
                 sortDescLabel="(DESC)"
                 getDataAsync={getDataAsync}
-                footer={{ initialPageSize: 10 }}
+                footer={{ initialPageSize: 20 }}
                 renderRowDetail={detailTemplate}
                 rowDetailButtonShowingContent="hide"
                 rowDetailButtonHiddenContent="show"
