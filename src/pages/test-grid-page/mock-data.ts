@@ -17,17 +17,28 @@ export interface IData
     five: number;
     key: number;
 }
-export function update(model: IData): IData
-{
-    const index = _data.findIndex(m => m.key === model.key);
-    if (index < 0)
-    {
-        throw new Error(`Could not find data with key=${model.key}`);
-    }
 
-    const result = cloneData(model);
-    _data[index] = result;
-    return result;
+export interface IDataEdit
+{
+    num: number;
+    one: string;
+    two: string;
+    threeA: string;
+    threeB: string;
+    four: number;
+    five: number;
+    key: number;
+    otherField: string;
+}
+
+export function getEditData(m: IData): IDataEdit
+{
+    const model = _data.find(x => x.key === m.key);
+    if (!model)
+    {
+        throw new Error('could not find edit data');
+    }
+    return model;
 }
 
 export function getData(
@@ -60,7 +71,14 @@ export function getData(
         return compareResult;
     };
 
-    let data = cloneData(_data);
+    const cloned = cloneData(_data);
+    let data = cloned.map(x =>
+    {
+        const model = x as any;
+        delete model.otherField;
+        return model;
+    });
+
     data = sort ? data.sort(compare) : data;
 
     if (filters)
@@ -89,7 +107,7 @@ export function getData(
     };
 }
 
-export function updateData(model: IData): IData
+export function updateData(model: IDataEdit): IData
 {
     const index = _data.findIndex(x => x.key === model.key);
     if (index < 0)
@@ -100,7 +118,7 @@ export function updateData(model: IData): IData
     return model;
 }
 
-export function addData(model: IData): IData
+export function addData(model: IDataEdit): IData
 {
     model.key = _data.length + 1;
     _data.push(model);
@@ -120,7 +138,7 @@ export function deleteData(model: IData)
 const _data = generateData(1000);
 function generateData(n: number)
 {
-    const result: IData[] = [];
+    const result: IDataEdit[] = [];
     for (let i = 0; i < n; i++)
     {
         const rowNum = i + 1;
@@ -133,6 +151,7 @@ function generateData(n: number)
             four: (i % 4) + 1,
             five: (i % 4) + 1,
             key: i + 1,
+            otherField: `edit=${rowNum}`
         });
     }
     return result;

@@ -13,19 +13,20 @@ import
     ISyncDataResult,
     SyncAction,
     useGridContext,
-    validate
 } from 'less-annoying-grid';
 import
 {
     addData,
     deleteData,
-    getData as getMockData,
+    getData as getMockData, getEditData,
     IData as IMockData,
+    IDataEdit as IMockDataEdit,
     updateData,
 } from './mock-data';
 import './styles.css';
 import { ToolBar } from './toolbar';
 import { CustomEditorExample } from './custom-editor-example';
+import { cols } from './columns';
 
 const TestGrid: React.FunctionComponent = (): JSX.Element =>
 {
@@ -40,10 +41,13 @@ const TestGrid: React.FunctionComponent = (): JSX.Element =>
                 renderRowDetail={detailTemplate}
                 rowDetailButtonShowingContent="hide"
                 rowDetailButtonHiddenContent="show"
+                getLoadSingleState={(m: IMockData) => `loading ${m.key}`}
+                getDetailModelAsync={getDetailDataAsync}
                 editable={{
-                    editMode: GridEditMode.inline,
-                    autoSave: false,
+                    editMode: GridEditMode.external,
+                    autoSave: true,
                     addToBottom: false,
+                    getEditModelAsync: getEditDataAsync,
                     syncChanges: syncDataAsync,
                     modelTypeName: 'Product',
                 }}
@@ -61,145 +65,27 @@ const TestGrid: React.FunctionComponent = (): JSX.Element =>
 
 export default TestGrid;
 
-function detailTemplate(m: IMockData): JSX.Element
+function detailTemplate(m: IMockDataEdit): JSX.Element
 {
     return (
         <div>
             <div>
-                <label>Num</label>
+                <label>Num: </label>
                 {m.num}
             </div>
             <div>
-                <label>Key</label>
+                <label>Key: </label>
                 {m.key}
+            </div>
+            <div>
+                <label>Detail Field: </label>
+                {m.otherField}
             </div>
         </div>
     );
 }
 
-const cols: Array<Column<IMockData>> = [
-    {
-        name: 'Key',
-        field: 'key',
-        type: 'data',
-    },
-    {
-        name: 'Col 0',
-        field: 'num',
-        type: 'data',
-        editable: { type: 'number', min: 0, max: 100, step: 5 },
-        defaultValue: 50,
-        validator: validate.validator(
-            validate.min(10),
-            validate.max(90),
-            validate.required()
-        ),
-    },
-    {
-        name: 'Col 1',
-        field: 'one',
-        type: 'data',
-        defaultValue: () => `n-${Math.round(Math.random() * 1000)}`,
-        editable: {
-            type: 'custom',
-            editor: <CustomEditorExample field={'one'} />,
-        },
-        validator: validate.validator(
-            validate.minLen(3),
-            validate.maxLen(6),
-            validate.required()
-        ),
-    },
-    {
-        name: 'Group 1',
-        type: 'group',
-        subColumns: [
-            {
-                name: 'Col 2',
-                field: 'two',
-                type: 'data',
-            },
-            {
-                name: 'Col 3A',
-                field: 'threeA',
-                hidden: false,
-                type: 'data',
-            },
-            {
-                name: 'Col 3B',
-                field: 'threeB',
-                renderDisplay: m => <u>{m.threeB}</u>,
-                type: 'data',
-            },
-            {
-                name: 'Col 3C',
-                field: 'threeC',
-                renderDisplay: m => <u>3c-{m.threeB}</u>,
-                type: 'data',
-            },
-        ],
-    },
-    {
-        name: 'Col 4',
-        field: 'four',
-        hidden: false,
-        type: 'data',
-        editable: {
-            type: 'values',
-            subType: 'number',
-            values: [
-                { text: 'one', value: 1 },
-                { text: 'two', value: 2 },
-                { text: 'three', value: 3 },
-                { text: 'four', value: 4 },
-            ],
-        },
-    },
-    {
-        name: 'Col 5',
-        field: 'five',
-        sortable: true,
-        type: 'data',
-        editable: {
-            type: 'values',
-            subType: 'number',
-            values: [1, 2, 3, 4].map(n =>
-            {
-                return { text: n.toString(), value: n };
-            }),
-        },
-    },
-    {
-        name: 'Display (3B)',
-        type: 'display',
-        renderDisplay: m => <u>{m.threeB}</u>,
-    },
-    {
-        type: 'action',
-        name: 'actions',
-        actions: [
-            {
-                type: 'delete',
-                buttonContent: 'DEL',
-                confirm: (m, _) =>
-                {
-                    return new Promise<boolean>(resolve =>
-                    {
-                        resolve(
-                            window.confirm(
-                                `Are you sure you would like to delete the row with Key=${m.key}`
-                            )
-                        );
-                    });
-                },
-            },
-            {
-                type: 'edit',
-                buttonContent: 'Edit',
-            },
-        ],
-    },
-];
+
 
 const SyncProgress: React.FunctionComponent = () =>
 {
@@ -236,8 +122,32 @@ function getDataAsync(
     });
 }
 
+function getDetailDataAsync(m: IMockData): Promise<IMockDataEdit>
+{
+    return new Promise<IMockDataEdit>(resolve =>
+    {
+        const result = getEditData(m);
+        setTimeout(() =>
+        {
+            resolve(result);
+        }, 2000);
+    });
+}
+
+function getEditDataAsync(m: IMockData): Promise<IMockDataEdit>
+{
+    return new Promise<IMockDataEdit>(resolve =>
+    {
+        const result = getEditData(m);
+        setTimeout(() =>
+        {
+            resolve(result);
+        }, 2000);
+    });
+}
+
 function syncDataAsync(
-    changes: Array<ISyncData<IMockData>>,
+    changes: Array<ISyncData<IMockDataEdit>>,
     updateProgress: (
         p: IProgress,
         interimResults?: Array<ISyncDataResult<IMockData>>
